@@ -1,0 +1,11 @@
+node_modules/**
+src/**
+test/**
+scripts/**
+.local/**
+.test-profile/**
+.test-extensions/**
+.vscode/**
+.gitignore
+package-lock.json
+**/*.log

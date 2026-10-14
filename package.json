@@ -1,0 +1,89 @@
+{
+  "name": "matu-coursework",
+  "displayName": "码图课程作业",
+  "description": "在 VS Code 中查看码图课程作业、编写源码、提交并查看评测。",
+  "version": "0.1.0",
+  "publisher": "matu-local",
+  "license": "MIT",
+  "engines": { "vscode": "^1.100.0" },
+  "categories": ["Education"],
+  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "extensionKind": ["ui"],
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": false, "description": "提交源码需要访问本地文件和登录信息。" },
+    "virtualWorkspaces": { "supported": false }
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{ "id": "matu", "title": "码图", "icon": "media/matu.svg" }]
+    },
+    "views": {
+      "matu": [{ "id": "matu.coursework", "name": "课程作业" }]
+    },
+    "viewsWelcome": [{
+      "view": "matu.coursework",
+      "contents": "[登录码图](command:matu.login)\n[刷新课程作业](command:matu.refresh)"
+    }],
+    "commands": [
+      { "command": "matu.login", "title": "登录", "category": "码图", "icon": "$(account)" },
+      { "command": "matu.logout", "title": "退出并清除登录信息", "category": "码图", "icon": "$(sign-out)" },
+      { "command": "matu.refresh", "title": "刷新课程作业", "category": "码图", "icon": "$(refresh)" },
+      { "command": "matu.openTask", "title": "打开题目", "category": "码图", "icon": "$(go-to-file)" },
+      { "command": "matu.submit", "title": "提交当前题目", "category": "码图", "icon": "$(cloud-upload)" },
+      { "command": "matu.history", "title": "查看提交记录", "category": "码图", "icon": "$(history)" },
+      { "command": "matu.refreshCurrent", "title": "刷新当前题目评测", "category": "码图", "icon": "$(refresh)" },
+      { "command": "matu.discardPending", "title": "结束未确认提交的跟踪", "category": "码图" }
+    ],
+    "keybindings": [{
+      "command": "matu.submit",
+      "key": "ctrl+alt+enter",
+      "mac": "cmd+alt+enter",
+      "when": "editorTextFocus && matu.associated && !matu.busy"
+    }],
+    "menus": {
+      "view/title": [
+        { "command": "matu.refresh", "when": "view == matu.coursework", "group": "navigation@1" },
+        { "command": "matu.login", "when": "view == matu.coursework", "group": "navigation@2" },
+        { "command": "matu.logout", "when": "view == matu.coursework", "group": "account" }
+      ],
+      "view/item/context": [
+        { "command": "matu.openTask", "when": "view == matu.coursework && viewItem == matuTask", "group": "inline@1" },
+        { "command": "matu.history", "when": "view == matu.coursework && viewItem == matuTask", "group": "inline@2" }
+      ],
+      "editor/title": [
+        { "command": "matu.submit", "when": "matu.associated && resourceScheme == file", "group": "navigation@1" },
+        { "command": "matu.history", "when": "matu.associated && resourceScheme == file", "group": "navigation@2" }
+      ]
+    },
+    "configuration": {
+      "title": "码图课程作业",
+      "properties": {
+        "matu.homeworkDirectory": {
+          "type": "string",
+          "default": "C:\\Study\\matu-homework",
+          "scope": "machine",
+          "description": "本地课程作业目录。更改目录不会移动已有文件。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test test/*.test.js",
+    "test:vscode": "node scripts/test-vscode.js",
+    "smoke:live": "node scripts/live-read.js",
+    "package": "npm run build && vsce package --allow-missing-repository --out ../matu-coursework-0.1.0.vsix"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2",
+    "iconv-lite": "^0.7.0",
+    "tough-cookie": "^6.0.0"
+  },
+  "devDependencies": {
+    "@vscode/codicons": "^0.0.45",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.25.10"
+  }
+}
